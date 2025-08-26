@@ -14,5 +14,5 @@ app.get('/ping', (req, res) => {
 app.use('/trpc', trpcExpress.createExpressMiddleware({ router: trpcRouter }))
 
 app.listen(3000, () => {
-  console.log('Listening on http://localhost:3000')
+  console.info('Listening on http://localhost:3000')
 })

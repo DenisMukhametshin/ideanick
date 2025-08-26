@@ -5,5 +5,26 @@
   "workspaces": [
     "backend",
     "webapp"
-  ]
+  ],
+  "scripts": {
+    "types": "npm run types --workspaces",
+    "dev": "concurrently -n back,web -c auto \"npm run dev --workspace=@ideanick/backend\" \"npm run dev --workspace=@ideanick/webapp\"",
+    "prettify": "npm run prettify --workspaces",
+    "lint": "concurrently -n back,web -c auto \"npm exec -w @ideanick/backend eslint -- --cache --cache-location ./node_modules/.cache/.eslintcache --ext .ts src\" \"npm exec -w @ideanick/webapp eslint -- --cache --cache-location ./node_modules/.cache/.eslintcache --ext .ts,.tsx src\"",
+    "prepare": "husky install"
+  },
+  "dependencies": {
+    "concurrently": "^9.2.0"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3.3.1",
+    "@eslint/js": "^9.34.0",
+    "@typescript-eslint/eslint-plugin": "^8.40.0",
+    "@typescript-eslint/parser": "^8.40.0",
+    "eslint": "^9.34.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-react-refresh": "^0.4.20",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.1.5"
+  }
 }
