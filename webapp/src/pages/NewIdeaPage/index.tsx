@@ -6,8 +6,12 @@ import { withZodSchema } from 'formik-validator-zod'
 import { trpc } from '../../lib/trpc'
 import { zCreateIdeaTrpcInput } from '@ideanick/backend/src/router/createIdea/input'
 import type { ZodTypeAny } from 'zod'
+import { useState } from 'react'
 
 export const NewIdeaPage = () => {
+  const [successMessageVisible, setSuccessMessageVisible] = useState(false)
+  const [submittingError, setSubmittingError] = useState<string | null>(null)
+
   const createIdea = trpc.createIdea.useMutation()
 
   const formik = useFormik({
@@ -19,7 +23,19 @@ export const NewIdeaPage = () => {
     },
     validate: withZodSchema(zCreateIdeaTrpcInput as unknown as ZodTypeAny),
     onSubmit: async (values) => {
-      await createIdea.mutateAsync(values)
+      try {
+        await createIdea.mutateAsync(values)
+        formik.resetForm()
+        setSuccessMessageVisible(true)
+        setTimeout(() => {
+          setSuccessMessageVisible(false)
+        }, 3000)
+      } catch (error: { message: string } | any) {
+        setSubmittingError(error?.message)
+        setTimeout(() => {
+          setSubmittingError(null)
+        }, 3000)
+      }
     },
   })
 
@@ -36,8 +52,11 @@ export const NewIdeaPage = () => {
         <Input name="description" label="Description" formik={formik} />
         <Textarea name="text" label="Text" formik={formik} />
         {!formik.isValid && !!formik.submitCount && <div style={{ color: 'red' }}>Some fields are invalid</div>}
-
-        <button type="submit">Create Idea</button>
+        {!!submittingError && <div style={{ color: 'red' }}>{submittingError}</div>}
+        {successMessageVisible && <div style={{ color: 'green' }}>Idea created!</div>}
+        <button type="submit" disabled={formik.isSubmitting}>
+          {formik.isSubmitting ? 'Submitting...' : 'Create Idea'}
+        </button>
       </form>
     </Segment>
   )
