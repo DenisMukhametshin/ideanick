@@ -19,5 +19,19 @@ export default tseslint.config([
       ecmaVersion: 2020,
       globals: globals.browser,
     },
+    rules: {
+      '@typescript-eslint/no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: ['@ideanick/backend/**', '!@ideanick/backend/**/', '!@ideanick/backend/**/input'],
+              allowTypeImports: true,
+              message: 'Only types and input schemas are allowed to be imported from backend workspace',
+            },
+          ],
+        },
+      ],
+    },
   },
 ])
